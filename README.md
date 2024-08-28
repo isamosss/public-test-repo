@@ -12,7 +12,7 @@ The proposal of this solution is to offer a new method levearging GenAI and Mult
 2. The data set used for this solution, has been broken down to specific cars makes and models, even thought the images are not of those specific models. The idea was to create separate metdata to demonstrate the solution and the use case.
 3. Below is a quick demo of how the user interacts with this solution:
 
-![Sol Arch](/static_assets/demo.mov)  
+[![Sol Arch](/static_assets/demo.mov)]
 
 # Solution Details:
 
@@ -120,7 +120,7 @@ In the repository, there is a "test_data_set" folder. This folder has random ima
 
 2. On the left side of the UI, choose the parameters, Make, model, area of the damage, type of damage, the severity and how many matches you want to find from the Vector Database.
 
-![Test1_Results](/static_assets/test_example.png)
+![Test1_Results](/static_assets/test_1_example.png)
 
 In this example, image was loaded, and 3 matches were found. 
 
