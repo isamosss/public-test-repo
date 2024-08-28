@@ -23,15 +23,9 @@ sts_client = boto3.client('sts')
 session = boto3.Session()
 
 
-#Set variables for the locations of each data_set
-model_1_folder = '/home/appuser/app/model_1'
-model_2_folder = '/home/appuser/app/model_2' 
-model_3_folder = '/home/appuser/app/model_3' 
-
-
 #Get SSM Parameter values for OpenSearch Domain and
 ssm = session.client('ssm')
-parameters = ['/car-repair/collection-domain-name', '/car-repair/s3-bucket'] 
+parameters = ['/car-repair/collection-domain-name', '/car-repair/s3-bucket', '/car-repair/s3-bucket-source'] 
 response = ssm.get_parameters(
     Names=parameters,
     WithDecryption=True
@@ -46,6 +40,8 @@ os_index_name = 'repair-cost-data' #os index name that will be created
 parameter2_value = response['Parameters'][1]['Value']
 s3_bucket = parameter2_value #bucket name from the cloudformation template
 s3_folder = 'repair-data/'
+parameter3_value = response['Parameters'][2]['Value']
+s3_bucket_source = parameter3_value
 
 #Initialize OpenSearch Client
 credentials = session.get_credentials()
@@ -221,102 +217,77 @@ def indexData(client, image_vector, metadata, os_index_name, os_host):
     print('\nDocument added:')
     print(response)
 
-def ingest_image(client, filename, folder_path, os_index_name, os_host, instruction, counter):
-        
-    print(f"Current run: {counter}")
-    response = "nothing done " + str(counter)
 
-    try:
-        base, ext = os.path.splitext(filename)
-        if ext in ['.jpg', '.jpeg', '.png']:
+def ingest_image_s3(file_contents, start_index, end_index, client, file_key , os_index_name, os_host, instruction):
+    print('-----------------------------')
+    print('Document Ingestion Process Starting')
+    print('-----------------------------')
+    batch_files = list(file_contents.items())[start_index:end_index]
+    for file_key, file_binary in batch_files:
 
-            img_path = folder_path + '/' + filename
-            print('-----------------------------')
-            print('Document Ingestion Process Starting')
-            print('Processing image file: ', img_path)
-            print('-----------------------------')
-            if os.path.exists(img_path):
-                img = Image.open(img_path)
-                with open(img_path, 'rb') as image_file:
-                    file_name = os.path.basename(img_path)
-                    image_bytes = image_file.read() 
+        encoded_image = base64.b64encode(file_binary).decode('utf-8')
+        json_text = create_json_metadata(encoded_image, instruction)
+        json_string = json.dumps(json_text)
+        data_2 = json.loads(json_string)
+        json_bytes = data_2.encode('utf-8')
+        base64_bytes = base64.b64encode(json_bytes)
+        encoded_json = base64_bytes.decode('utf-8')
+        data = json.loads(json_text)
+        ##upload image to the front end bucket
+        s3.put_object(Body=file_binary, Bucket=s3_bucket, Key=file_key)
+        body = json.dumps({
+                "inputText": encoded_json,
+                "inputImage": encoded_image,
+                "embeddingConfig": {
+                    "outputEmbeddingLength": 1024
+                }
+            })
+        print('Invoking Embeddings model: ', model_name)
+        response = bedrock.invoke_model(modelId=model_name, body=body)
+        body = response['body']
+        body_output = body.read()
+        data['s3_location'] = file_key
+        print(data)
+        metadata = data
+        body_string = body_output.decode('utf-8')
+        data_embedded = json.loads(body_string)
+        image_vector = data_embedded['embedding']
+        json_embedding = json.loads(body_string)
+        indexData(client, image_vector, metadata, os_index_name, os_host)
 
-                    image_base64_bytes = base64.b64encode(image_bytes)
-                    encoded_image = image_base64_bytes.decode('utf-8')
-
-                key = s3_folder + file_name
-                print('Uploading file to S3: ', file_name)
-                s3.upload_file(img_path, s3_bucket, key)
-                # call that involved Bedrock
-                json_text = create_json_metadata(encoded_image, instruction)
-
-                json_string = json.dumps(json_text)
-                data_2 = json.loads(json_string)
-                json_bytes = data_2.encode('utf-8') 
-                base64_bytes = base64.b64encode(json_bytes)
-                encoded_json = base64_bytes.decode('utf-8')
-                data = json.loads(json_text)
-                body = json.dumps({
-                        "inputText": encoded_json,
-                        "inputImage": encoded_image,
-                        "embeddingConfig": {
-                            "outputEmbeddingLength": 1024
-                        }
-                    })
-                print('Invoking model: ', model_name)
-                response = bedrock.invoke_model(modelId=model_name, body=body)
-
-                body = response['body']
-
-                body_output = body.read()
-
-                data['s3_location'] = key
-                metadata = data
-
-                body_string = body_output.decode('utf-8')
-                data_embedded = json.loads(body_string)  
-                image_vector = data_embedded['embedding']
-                json_embedding = json.loads(body_string)
-                
-                indexData(client, image_vector, metadata, os_index_name, os_host)
-                
-                #create variable tha will concatenate the string OK with the current counter variable value
-                response = "OK " + str(counter)
-
-                print(response)
-    except Exception as e:
-        print(f"Counter {counter} Error message: {e}")
-        response = "Error counter" + str(counter) + " - Error message: " + str(e)
-    
-    return response
-
-
-#Controls the ingestion of all files in the provided folder. Execution is multi-threaded
-def image_ingestion(folder_path, os_index_name, os_host, instruction):
-    counter = 0
+def list_and_load_s3_files(os_index_name, os_host, instruction_model_1, instruction_model_2, instruction_model_3):
+    s3 = boto3.client('s3')
+    file_contents = {}
     client = get_OpenSearch_client(os_host, os_index_name)
-    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
-        futures = []
+    try:
+        # List all objects in the bucket
+        response = s3.list_objects_v2(Bucket=s3_bucket_source)
 
-        for filename in os.listdir(folder_path):
-            
-            if counter == 0:
-                total_loops = len(os.listdir(folder_path))
-    
-            print(f"This loop will run for a total of {total_loops} times")
-    
-            counter += 1
+        # If the bucket is not empty
+        if 'Contents' in response:
+            # Loop through each file in the bucket
+            for obj in response['Contents']:
+                file_key = obj['Key']
+                print(file_key)
+                # Get the binary content of the file
+                file_obj = s3.get_object(Bucket=s3_bucket_source, Key=file_key)
+                file_content = file_obj['Body'].read()
+                #print(file_content)
+                #ingest_image_s3(client, file_key, file_content, os_index_name, os_host, instruction)
+                # Store the file content in the dictionary
+                file_contents[file_key] = file_content
+                        # Process the first batch of 90 files
+            ingest_image_s3(file_contents, 0, 90, client, file_key, os_index_name, os_host, instruction_model_1)
 
-            futures.append(executor.submit(ingest_image, client, filename, folder_path, os_index_name, os_host, instruction, counter))
+            # Process the second batch of 90 files
+            ingest_image_s3(file_contents, 91, 180, client, file_key, os_index_name, os_host, instruction_model_2)
 
-            # if counter == 4:
-            #     break
+            # Process the remaining files
+            ingest_image_s3(file_contents, 181, len(file_contents), client, file_key, os_index_name, os_host, instruction_model_3)
+    except Exception as e:
+        print(f"Error: {e}")
 
-    for future in concurrent.futures.as_completed(futures):
-        result = future.result()
-        print(result)
-            
-
+    return file_contents
 
 #store current date time
 start_time = datetime.now()
@@ -325,11 +296,7 @@ start_time = datetime.now()
 print("Start date and time: ")
 print(start_time)
 print('-----------------------------')
-
-#Calls the function for ingestion of data
-image_ingestion(model_1_folder, os_index_name, os_host, instruction_model_1)
-image_ingestion(model_2_folder, os_index_name, os_host, instruction_model_2)
-image_ingestion(model_3_folder, os_index_name, os_host, instruction_model_3)
+list_and_load_s3_files(os_index_name, os_host, instruction_model_1, instruction_model_2, instruction_model_3)
 
 #print the end date time
 end_time = datetime.now()

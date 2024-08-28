@@ -8,7 +8,7 @@ The proposal of this solution is to offer a new method levearging GenAI and Mult
 
 # Important Information about this solution and Quick Demo:
 
-1. The images contained on this solution are all from open source data sets that can be found [here](https://www.kaggle.com/datasets/anujms/car-damage-detection).
+1. The images contained on this solution are all from open source data sets that can be found [here](https://universe.roboflow.com/car-damage-kadad/car-damage-images/).
 2. The data set used for this solution, has been broken down to specific cars makes and models, even thought the images are not of those specific models. The idea was to create separate metdata to demonstrate the solution and the use case.
 3. Below is a quick demo of how the user interacts with this solution:
 
@@ -35,9 +35,11 @@ Inference Flow Steps:
 4. With the closest matches from the Vector Database, the inference processor will use the plain text data that was store with the vector to do a basic calculator of average cost from those closest 3 matches. 
 5. The Front End will pull the images from S3 to show it in the UI. The UI will also show the accuracy, the image of each match and the metadata that was stored on each match. 
 
-# Deployment steps:
+# Solution Deployment Requirements:
 
-## Step 1: Enable Bedrock Models
+Before deploying the solution, make sure the following requirements have been met.
+
+## Requirement 1: Enable Amazon Bedrock Models
 
 Go To the Bedrock console in one of the Bedrock supported regions and enable at least the following models:
 
@@ -46,7 +48,15 @@ Go To the Bedrock console in one of the Bedrock supported regions and enable at 
 
 In order to enable the mentioned models. You can follow the instructions provided [here](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html#model-access-modify).
 
-## Step 2: Run CloudFormation template
+## Requirement 2: Make sure you have the latest version of the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) running on your machine.
+
+## Requirement 3: An IAM User/Role that can run CloudFormation templates and has necessary access to create resources for ECS, IAM, Systems Manager, OpenSearch Serverless, S3, CloudFront and Application Load Balancers.
+
+# Deployment steps:
+
+Once the requirements have been met, the following steps can be followed to deploy the solution.
+
+## Step 1: Run CloudFormation template
 
 Choose from one of the following deployment regions, right now this solution can only run on regions where bedrock is supported.
 
@@ -57,6 +67,9 @@ CloudFormation Deployments
 | US-EAST-2 | [![Open In CloudFormation](/static_assets/view-template.png)](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/quickcreate?templateURL=https://s3.us-east-1.amazonaws.com/pedroni-us-east-1/new_build_proj.yml)|
 | US-WEST-2 | [![Open In CloudFormation](/static_assets/view-template.png)](https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/quickcreate?templateURL=https://s3.us-east-1.amazonaws.com/pedroni-us-east-1/new_build_proj.yml)|
 | EU-CENTRAL-1 | [![Open In CloudFormation](/static_assets/view-template.png)](https://eu-central-1.console.aws.amazon.com/cloudformation/home?region=eu-central-1#/stacks/quickcreate?templateURL=https://s3.us-east-1.amazonaws.com/pedroni-us-east-1/new_build_proj.yml)|
+
+## Step 2: 
+
 
 ## Step 3: Access Inference Code.
 
