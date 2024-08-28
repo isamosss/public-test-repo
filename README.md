@@ -17,6 +17,8 @@ The proposal of this solution is to offer a new method levearging GenAI and Mult
   <source src="static_assets/demo.mov" type="video/mp4">
 </video>
 
+<video src="https://github.com/vinipedroni/public-test-repo/blob/main/static_assets/demo.mov" width="300" />
+
 # cool-beans
 
 static_assets/demo.mov
