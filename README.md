@@ -48,9 +48,13 @@ Go To the Bedrock console in one of the Bedrock supported regions and enable at 
 
 In order to enable the mentioned models. You can follow the instructions provided [here](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html#model-access-modify).
 
-## Requirement 2: Make sure you have the latest version of the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) running on your machine.
+## Requirement 2: Install AWS CLI
 
-## Requirement 3: An IAM User/Role that can run CloudFormation templates and has necessary access to create resources for ECS, IAM, Systems Manager, OpenSearch Serverless, S3, CloudFront and Application Load Balancers.
+Make sure you have the latest version of the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) running on your machine.
+
+## Requirement 3: Appropriate IAM Permissions to deploy the solution and access required services
+
+An IAM User/Role that can run CloudFormation templates and has necessary access to create resources for ECS, IAM, Systems Manager, OpenSearch Serverless, S3, CloudFront and Application Load Balancers.
 
 # Deployment steps:
 
