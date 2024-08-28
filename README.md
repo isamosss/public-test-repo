@@ -106,15 +106,13 @@ aws ecs run-task --task-definition ingestion-definition --cluster damage-ecs-clu
 
 After running this command, you can navigate to your Amazon ECS Console, open your ECS Cluster and you should see two tasks running, one task runs from the inference taks definition and the one we just created runs from the ingration task definition. The ingestion task will be a temporary task which will be loading the data from the Source S3 Bucket into the Open Search Vector Database.
 
-
-
 ## Step 4: Access Inference Code.
 
 Once the CloudFormation stack has finished deploying, go to the outputs tab, look for the "InferenceUIURL" key, you should see a cloudfront distribution link, click there should take you to the inference ui.
 
 ![CFN Outputs](/static_assets/cfn_output_1.png)
 
-## Step 4: Testing the Solution:
+## Step 5: Testing the Solution:
 
 In the repository, there is a "test_data_set" folder. This folder has random images which can be used for testing the solution. Follow the steps below in order to see the results in the UI.
 
@@ -145,10 +143,10 @@ In this example, image was loaded, and 3 matches were found.
 
 If you would like to cleanup this solution from your AWS Account follow the steps below:
 
-1. Open your CloudFormation Console, click on the stack that was deployed and go to Outputs. There you should see the name of your ECR Repository and the S3 Bucket Name.
+1. Open your CloudFormation Console, click on the stack that was deployed and go to Outputs. There you should see the name of your ECR Repository and the S3 Bucket Names for both bucket S3BucketFrontEnd and SourceS3Bucket.
 
-2. Go to the S3 console, find the bucket and delete all the content in the bucket. The bucket should be empty, otherwise the CloudFormation stack will fail to delete it.
+2. Go to the S3 console, find each bucket and delete all the content in each bucket. The buckets should be empty, otherwise the CloudFormation stack will fail to delete it.
 
-3. Go to the ECR console, fine the ecr repository and delete all images in this repository. The reposiroty should be empty, otherwise the CloudFormation stack will fail to delete it.
+3. Go to the ECR console, find the ecr repository and delete all images in this repository. The reposiroty should be empty, otherwise the CloudFormation stack will fail to delete it.
 
 4. Start the deletion of the CloudFormation Stack. This is going to remove all the other resources from the AWS Account.
