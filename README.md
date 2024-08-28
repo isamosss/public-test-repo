@@ -13,6 +13,10 @@ The proposal of this solution is to offer a new method levearging GenAI and Mult
 3. Below is a quick demo of how the user interacts with this solution:
 
 
+<video width="320" height="240" controls>
+  <source src="static_assets/demo.mov" type="video/mp4">
+</video>
+
 # cool-beans
 
 static_assets/demo.mov
