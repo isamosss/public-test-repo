@@ -259,11 +259,15 @@ if upload_file is not None:
     for i, hit in enumerate(results['hits']['hits']):
         metadata = hit['_source']['metadata']
         s3_location = metadata['s3_location']
+        st.write(s3_location)
+        print(s3_location)
         score = hit['_score']
         metadata_string = json.dumps(metadata, indent=2)  # Convert metadata to JSON string
         metadata_strings.append(metadata_string)  # Append the metadata string to the list
         with columns[i + 1]:
             url = 'https://' + cf_url + '/' + s3_location
+            print(url)
+            st.write(url)
             response = requests.get(url)
             img = Image.open(BytesIO(response.content))
             st.write(f'This is the Match Accuracy for Image {i + 1}: {score}')
