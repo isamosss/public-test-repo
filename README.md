@@ -84,12 +84,31 @@ The screenshot below shows the format and the option to choose when downloading.
 Run the following commands to upload the required damage images to the S3 Bucket. You can find the bucket name by going to the stack outputs and looking at the 'SourceS3Bucket' value.
 
 ```
-
 aws s3 cp /path/to/source/folder/train/ s3://{source-bucket-name}  --recursive --exclude "*" --include "*.jpg" --include "*.png"
-aws s3 cp /path/to/source/folder//valid/ s3://{source-bucket-name} --recursive --exclude "*" --include "*.jpg" --include "*.png"
+aws s3 cp /path/to/source/folder/valid/ s3://{source-bucket-name} --recursive --exclude "*" --include "*.jpg" --include "*.png"
 ```
 
-## Step 3: Access Inference Code.
+## Step 3: Run Ingestion Task
+
+In this step, the task which will be ingesting the content from the source s3 bucket will be initiated. In order to do that run the following sequence of commands.
+
+```
+aws ssm get-parameters --names /car-repair/security-group --query 'Parameters[0].Value'
+aws ssm get-parameters --names /car-repair/subnet --profile --query 'Parameters[0].Value' 
+```
+
+These two commands above will retrieve the id for the subnet and the security groups that are required for the next command. 
+Copy the command below and before running it, replace the 'security-group-id' and 'subnet-id' with the respective values retrieved in the previous commands and then run the command.
+
+```
+aws ecs run-task --task-definition ingestion-definition --cluster damage-ecs-cluster --network-configuration '{ "awsvpcConfiguration": { "assignPublicIp":"ENABLED", "securityGroups": ["security-group-id"], "subnets": ["subnet-id"]}}' --launch-type="FARGATE" --region us-west-2 --profile Admin2
+```
+
+After running this command, you can navigate to your Amazon ECS Console, open your ECS Cluster and you should see two tasks running, one task runs from the inference taks definition and the one we just created runs from the ingration task definition. The ingestion task will be a temporary task which will be loading the data from the Source S3 Bucket into the Open Search Vector Database.
+
+
+
+## Step 4: Access Inference Code.
 
 Once the CloudFormation stack has finished deploying, go to the outputs tab, look for the "InferenceUIURL" key, you should see a cloudfront distribution link, click there should take you to the inference ui.
 

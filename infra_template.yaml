@@ -598,6 +598,20 @@ Resources:
       Type: String
       Value: !GetAtt CloudFrontDistribution.DomainName
 
+  SubnetIDParameter:  
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "/car-repair/subnet"
+      Type: String
+      Value: !Ref PublicSubnet1
+      
+  SGIDParameter:  
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "/car-repair/security-group"
+      Type: String
+      Value: !Ref SecurityGroup
+
 Outputs:
   InferenceUIURL:
     Value: !GetAtt CloudFrontDistribution.DomainName
@@ -609,5 +623,5 @@ Outputs:
     Value: !Ref RepairCostBucket
     Description: Domain name of the CloudFront distribution
   SourceS3Bucket:
-    Value: !Ref RepairCostBucket
+    Value: !Ref SourceS3Bucket
     Description: Domain name of the CloudFront distribution
