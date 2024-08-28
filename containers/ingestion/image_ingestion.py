@@ -234,7 +234,7 @@ def ingest_image_s3(file_contents, start_index, end_index, client, file_key , os
         encoded_json = base64_bytes.decode('utf-8')
         data = json.loads(json_text)
         ##upload image to the front end bucket
-        key = s3_folder + file_name
+        key = s3_folder + file_key
         s3.put_object(Body=file_binary, Bucket=s3_bucket, Key=key)
         body = json.dumps({
                 "inputText": encoded_json,
