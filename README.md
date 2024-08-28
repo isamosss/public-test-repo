@@ -68,8 +68,22 @@ CloudFormation Deployments
 | US-WEST-2 | [![Open In CloudFormation](/static_assets/view-template.png)](https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/quickcreate?templateURL=https://s3.us-east-1.amazonaws.com/pedroni-us-east-1/new_build_proj.yml)|
 | EU-CENTRAL-1 | [![Open In CloudFormation](/static_assets/view-template.png)](https://eu-central-1.console.aws.amazon.com/cloudformation/home?region=eu-central-1#/stacks/quickcreate?templateURL=https://s3.us-east-1.amazonaws.com/pedroni-us-east-1/new_build_proj.yml)|
 
-## Step 2: 
+## Step 2: Download the data set from this [repository](https://universe.roboflow.com/car-damage-kadad/car-damage-images/). 
 
+In order to download this data set you may need to create a free user and then download the data set.
+The screenshot below shows the format and the option to choose when downloading. Once the zip file is downloaded you can extract to a local folder.
+
+![Download](/static_assets/data_set_download.png)  
+
+## Step 3: Upload Data Set to Source S3 Bucket
+
+Run the following commands to upload the required damage images to the S3 Bucket. You can find the bucket name by going to the stack outputs and looking at the 'SourceS3Bucket' value.
+
+```
+
+aws s3 cp /path/to/source/folder/train/ s3://{source-bucket-name}  --recursive --exclude "*" --include "*.jpg" --include "*.png"
+aws s3 cp /path/to/source/folder//valid/ s3://{source-bucket-name} --recursive --exclude "*" --include "*.jpg" --include "*.png"
+```
 
 ## Step 3: Access Inference Code.
 
