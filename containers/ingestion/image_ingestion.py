@@ -263,7 +263,7 @@ def list_and_load_s3_files(os_index_name, os_host, instruction_model_1, instruct
     try:
         # List all objects in the bucket
         response = s3.list_objects_v2(Bucket=s3_bucket_source)
-
+        print(response)
         # If the bucket is not empty
         if 'Contents' in response:
             # Loop through each file in the bucket
