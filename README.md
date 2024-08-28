@@ -12,7 +12,7 @@ The proposal of this solution is to offer a new method levearging GenAI and Mult
 2. The data set used for this solution, has been broken down to specific cars makes and models, even thought the images are not of those specific models. The idea was to create separate metdata to demonstrate the solution and the use case.
 3. Below is a quick demo of how the user interacts with this solution:
 
-![Sol Arch](/static_assets/quick_demo_gif.gif)  
+![Sol Arch](/static_assets/quick_demo.gif)  
 
 # Solution Details:
 
@@ -131,7 +131,7 @@ In this example, image was loaded, and 3 matches were found.
 
 4. Now let's see how changing the options from the user changes the accuracy of the results.
 
-![Test1_Results](/static_assets/test_example_2.png)
+![Test1_Results](/static_assets/test_2_example.png)
 
 5. As the image above shows, changing the parameters, but loading the same image, provided different results. The search matched with the same images but the accuracy is different. This indicates that the parameters chosen were closer to the metadata of the ingested images, thus influencing the vector created on the ingestion process.
 
