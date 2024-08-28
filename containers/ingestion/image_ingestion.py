@@ -247,7 +247,7 @@ def ingest_image_s3(file_contents, start_index, end_index, client, file_key , os
         response = bedrock.invoke_model(modelId=model_name, body=body)
         body = response['body']
         body_output = body.read()
-        data['s3_location'] = file_key
+        data['s3_location'] = key
         print(data)
         metadata = data
         body_string = body_output.decode('utf-8')
