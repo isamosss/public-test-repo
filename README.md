@@ -12,6 +12,15 @@ The proposal of this solution is to offer a new method levearging GenAI and Mult
 2. The data set used for this solution, has been broken down to specific cars makes and models, even thought the images are not of those specific models. The idea was to create separate metdata to demonstrate the solution and the use case.
 3. Below is a quick demo of how the user interacts with this solution:
 
+
+# cool-beans
+
+static_assets/demo.mov
+
+Press play to see the video.
+
+[![](static_assets/demo.mov)]
+
 [![Sol Arch](/static_assets/demo.mov)]
 
 # Solution Details:
