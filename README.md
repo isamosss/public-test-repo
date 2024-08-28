@@ -88,7 +88,7 @@ aws s3 cp /path/to/source/folder/train/ s3://{source-bucket-name}  --recursive -
 aws s3 cp /path/to/source/folder/valid/ s3://{source-bucket-name} --recursive --exclude "*" --include "*.jpg" --include "*.png"
 ```
 
-## Step 3: Run Ingestion Task
+## Step 4: Run Ingestion Task
 
 In this step, the task which will be ingesting the content from the source s3 bucket will be initiated. In order to do that run the following sequence of commands.
 
@@ -106,13 +106,13 @@ aws ecs run-task --task-definition ingestion-definition --cluster damage-ecs-clu
 
 After running this command, you can navigate to your Amazon ECS Console, open your ECS Cluster and you should see two tasks running, one task runs from the inference taks definition and the one we just created runs from the ingration task definition. The ingestion task will be a temporary task which will be loading the data from the Source S3 Bucket into the Open Search Vector Database.
 
-## Step 4: Access Inference Code.
+## Step 5: Access Inference Code.
 
 Once the CloudFormation stack has finished deploying, go to the outputs tab, look for the "InferenceUIURL" key, you should see a cloudfront distribution link, click there should take you to the inference ui.
 
 ![CFN Outputs](/static_assets/cfn_output_1.png)
 
-## Step 5: Testing the Solution:
+## Step 6: Testing the Solution:
 
 In the repository, there is a "test_data_set" folder. This folder has random images which can be used for testing the solution. Follow the steps below in order to see the results in the UI.
 
