@@ -269,6 +269,7 @@ if upload_file is not None:
             print(url)
             st.write(url)
             response = requests.get(url)
+            print(response)
             img = Image.open(BytesIO(response.content))
             st.write(f'This is the Match Accuracy for Image {i + 1}: {score}')
             st.sidebar.write(f'This is the metadata for the closest match we have in our DataStore for Image {i + 1}')
