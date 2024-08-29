@@ -114,7 +114,7 @@ Once the CloudFormation stack has finished deploying, go to the outputs tab, loo
 
 ## Step 6: Testing the Solution:
 
-In the repository, there is a "test_data_set" folder. This folder has random images which can be used for testing the solution. Follow the steps below in order to see the results in the UI.
+From the data set downloaded on step 2, there is a test folder. This folder has random images which can be used for testing the solution. Follow the steps below in order to see the results in the UI.
 
 1. In the UI, take the following actions and load the any of the images from the test data set:
 
